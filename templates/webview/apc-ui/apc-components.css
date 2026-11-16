@@ -165,3 +165,88 @@
   cursor: pointer;
 }
 .apc-chip:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ---- LCD section (chip-panel language: green LCD face with scanlines) --------
+   ui-map: sections[] { "kind": "lcd" } — panel chrome only, controls stay
+   siblings and opt into dark-on-green label ink with kind "lcd".            */
+.apc-section[data-kind="lcd"] {
+  background:
+    repeating-linear-gradient(0deg,
+      rgba(0, 0, 0, .055) 0 1px, transparent 1px calc(.25rem)),
+    linear-gradient(180deg, rgba(255,255,255,.16), rgba(0,0,0,.05) 70%),
+    var(--panel-lcd, #7caf74);
+  border-color: var(--lcd-rule, #4e7a4c);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.35),
+    inset 0 -.125rem .375rem rgba(0,0,0,.22);
+}
+.apc-section[data-kind="lcd"] .apc-sec-tag { color: var(--lcd-ink, #22402a); opacity: .9; }
+
+/* console shell chrome: moulded plastic with a colour seam */
+.apc-section[data-kind="shell"] {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.45), rgba(0,0,0,.06)),
+    var(--plate-2);
+  border-color: var(--rule);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.6),
+    inset 0 -.125rem .25rem rgba(0,0,0,.12),
+    var(--sh-raised);
+}
+.apc-section[data-kind="shell"] .apc-sec-tag { color: var(--lcd-ink, #3a3450); opacity: .8; }
+
+/* ---- dark ink for labels sitting on an LCD panel ---------------------------- */
+.apc-cell.k-lcd .apc-ctl-label,
+.apc-cell.k-lcd .apc-knob-label { color: var(--lcd-ink, #22402a); }
+
+/* ---- dot-matrix readout ------------------------------------------------------
+   <div class="apc-cell apc-dotmatrix">INIT</div>                               */
+.apc-dotmatrix {
+  display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(circle, rgba(160,255,190,.20) 0 calc(.05rem), transparent calc(.06rem)) 0 0 / calc(.2rem) calc(.2rem),
+    var(--lcd-face, #0a1310);
+  border: 1px solid var(--lcd-rule, #4e7a4c);
+  border-radius: var(--r-control);
+  box-shadow: var(--sh-recess), inset 0 0 calc(.5rem) rgba(0,0,0,.9);
+  color: var(--lcd-glow, #8cffb0);
+  font-family: var(--font-ui);
+  font-size: var(--t-readout, .625rem);
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  text-shadow: 0 0 calc(.3rem) rgba(140,255,176,.55);
+  overflow: hidden;
+}
+.apc-dotmatrix::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,.28) 0 1px, transparent 1px calc(.1875rem));
+  opacity: .5;
+}
+
+/* ---- pixel-style wordmark (original: blocky monospace + hard offset shadow) -- */
+.apc-wordmark {
+  display: flex; align-items: center;
+  font-family: var(--font-ui);
+  font-size: var(--t-title, .875rem);
+  font-weight: 800;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--mark-fill, #f3d64e);
+  -webkit-text-stroke: .03125rem var(--mark-edge, #2a1608);
+  text-shadow:
+    .0625rem .0625rem 0 var(--mark-shade, #8a4a12),
+    .125rem .125rem 0 var(--mark-edge, #2a1608),
+    0 0 .5rem rgba(243,214,78,.35);
+  white-space: nowrap;
+}
+.apc-wordmark-sub {
+  display: flex; align-items: center;
+  font-family: var(--font-ui);
+  font-size: var(--t-micro, .4375rem);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--lcd-ink, #3a3450);
+  opacity: .75;
+  white-space: nowrap;
+}

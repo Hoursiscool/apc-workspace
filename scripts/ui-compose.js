@@ -100,6 +100,17 @@ const COMPONENTS = {
     `<button class="apc-flip-cap"><span class="apc-flip-value">${esc(ctl.value || (ctl.options && ctl.options[0]) || ctl.kind || ctl.id)}</span></button>${labelHtml(ctl.label)}</div>`,
 };
 
+/* Extra renderers selected by `kind` on a `custom` control — the catalog grows
+   here plus apc-components.css; the map never carries layout CSS. */
+const CUSTOM_KINDS = {
+  wordmark: (ctl, cls, style, ab) =>
+    `<div class="${cls} apc-wordmark"${attrs(ctl, ab)} style="${style}">${esc(ctl.value || ctl.label || ctl.id)}</div>`,
+  wordmark_sub: (ctl, cls, style, ab) =>
+    `<div class="${cls} apc-wordmark-sub"${attrs(ctl, ab)} style="${style}">${esc(ctl.value || ctl.label || '')}</div>`,
+  dotmatrix: (ctl, cls, style, ab) =>
+    `<div class="${cls} apc-dotmatrix"${attrs(ctl, ab)} style="${style}">${esc(ctl.value || ctl.label || '')}</div>`,
+};
+
 function attrs(ctl, asBuilt) {
   // as-built manifests capture the production DOM — emit the real id so
   // preview annotations/parity target shipped elements, not ctl-* stubs.
@@ -182,14 +193,16 @@ function compose(map) {
   const hiddenCtls = [];
   for (const s of (map.sections || [])) {
     if (s.hidden) { hiddenCtls.push({ id: s.id, _sec: true }); continue; }
-    parts.push(`    <div class="apc-cell apc-section" id="${ab ? esc(s.id) : `sec-${esc(s.id)}`}" style="${cellStyle(s.cell)}"><span class="apc-sec-tag">${esc(s.title || s.label || '')}</span></div>`);
+    parts.push(`    <div class="apc-cell apc-section"${s.kind ? ` data-kind="${esc(s.kind)}"` : ''} id="${ab ? esc(s.id) : `sec-${esc(s.id)}`}" style="${cellStyle(s.cell)}"><span class="apc-sec-tag">${esc(s.title || s.label || '')}</span></div>`);
   }
   for (const c of (map.canvases || []))
     parts.push(`    <div class="apc-cell apc-well" id="${ab ? esc(c.id) : `cv-${esc(c.id)}`}" style="${cellStyle(c.cell)}"><canvas${c.kind ? ` data-fit="fit_${c.id.replace(/-/g, '_')}"` : ''}></canvas></div>`);
   for (const ctl of (map.controls || [])) {
     if (ctl.hidden) { hiddenCtls.push(ctl); continue; } // real DOM element, not visible in this view
-    const render = COMPONENTS[ctl.component] || COMPONENTS.custom;
-    parts.push('    ' + render(ctl, 'apc-cell', cellStyle(ctl.cell), ab));
+    const custom = ctl.component === 'custom' && ctl.kind && CUSTOM_KINDS[ctl.kind];
+    const render = custom || COMPONENTS[ctl.component] || COMPONENTS.custom;
+    const cls = 'apc-cell' + (ctl.kind ? ` k-${ctl.kind}` : '');
+    parts.push('    ' + render(ctl, cls, cellStyle(ctl.cell), ab));
   }
   if ((L.resize_handle || 'corner-gripper') === 'corner-gripper' &&
       !(map.controls || []).some(c => c.component === 'grip'))

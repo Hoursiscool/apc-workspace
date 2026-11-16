@@ -401,12 +401,18 @@ async function getTools() {
 // _tools/pluginval_bin (see scripts/test-plugin.sh). A hardcoded .exe path
 // reports MISSING forever on Mac/Linux.
 function pluginvalInfo() {
-  const segs = process.platform === 'win32'
-    ? ['_tools', 'pluginval', 'pluginval.exe']
+  // Windows also accepts the downloaded release (_tools/pluginval-bin), which is
+  // what scripts/pluginval-integration.ps1 and system-check.ps1 resolve first.
+  const candidates = process.platform === 'win32'
+    ? [['_tools', 'pluginval-bin', 'pluginval.exe'], ['_tools', 'pluginval', 'pluginval.exe']]
     : process.platform === 'darwin'
-      ? ['_tools', 'pluginval_bin', 'pluginval.app', 'Contents', 'MacOS', 'pluginval']
-      : ['_tools', 'pluginval_bin', 'pluginval'];
-  return { path: segs.join('/'), present: exists(path.join(REPO_ROOT, ...segs)) };
+      ? [['_tools', 'pluginval_bin', 'pluginval.app', 'Contents', 'MacOS', 'pluginval']]
+      : [['_tools', 'pluginval_bin', 'pluginval']];
+  for (const segs of candidates) {
+    if (exists(path.join(REPO_ROOT, ...segs)))
+      return { path: segs.join('/'), present: true };
+  }
+  return { path: candidates[0].join('/'), present: false };
 }
 
 function docHeadings(file) {
