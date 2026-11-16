@@ -1,0 +1,54 @@
+﻿{
+    "plugin_name":  "SPC8",
+    "version":  "v0.0.0",
+    "current_phase":  "design_complete",
+    "ui_framework":  "webview",
+    "complexity_score":  4,
+    "created_at":  "2026-11-16T17:37:03.7209258-05:00",
+    "last_modified":  "2026-11-16T17:46:55.5920434-05:00",
+    "phase_history":  [
+                          {
+                              "phase":  "plan_complete",
+                              "completed_at":  "2026-11-16T17:39:28.0162564-05:00",
+                              "framework_selected":  "webview"
+                          },
+                          {
+                              "phase":  "design_complete",
+                              "completed_at":  "2026-11-16T17:46:55.5996070-05:00",
+                              "framework_selected":  "webview"
+                          }
+                      ],
+    "current_generation":  null,
+    "generations":  [
+
+                    ],
+    "validation":  {
+                       "creative_brief_exists":  true,
+                       "parameter_spec_exists":  true,
+                       "architecture_defined":  true,
+                       "ui_framework_selected":  true,
+                       "design_complete":  true,
+                       "code_complete":  false,
+                       "tests_passed":  false,
+                       "ship_ready":  false
+                   },
+    "framework_selection":  {
+                                "decision":  "webview",
+                                "rationale":  "Instrument page plus a future 16-instrument table needs an HTML UI; relays, hot reload and the GENNYFL-referenced layout are far faster to reproduce in WebView2 than Visage. WebView2 SDK/runtime verified on this machine.",
+                                "implementation_strategy":  "phased"
+                            },
+    "formats":  {
+                    "clap":  false,
+                    "clap_id":  null,
+                    "clap_features":  [
+
+                                      ]
+                },
+    "error_recovery":  {
+                           "last_backup":  null,
+                           "rollback_available":  false,
+                           "error_log":  [
+
+                                         ]
+                       }
+}

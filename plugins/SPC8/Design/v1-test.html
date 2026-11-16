@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPC8 — APC design preview</title>
+<link rel="stylesheet" href="apc-ui/apc-core.css">
+<link rel="stylesheet" href="apc-ui/apc-components.css">
+<style>
+:root {
+  --cols: 50;
+  --rows: 32;
+  --apc-letterbox: var(--inset);
+  --plate: #c9c6d4;
+  --plate-2: #b8b4c6;
+  --surface: #a8a4b8;
+  --inset: #2b2836;
+  --rule: #8f8aa2;
+  --rule-2: #6d6880;
+  --ink: #24222e;
+  --ink-2: #4c4860;
+  --accent: #6a4fa3;
+  --grip-ink: #6d6880;
+  --panel-lcd: #7cae74;
+  --lcd-rule: #4d7749;
+  --lcd-ink: #1e3a24;
+  --lcd-face: #0b1410;
+  --lcd-glow: #8cffb0;
+  --mark-fill: #f3d64e;
+  --mark-shade: #8a4a12;
+  --mark-edge: #2a1608;
+  --font-ui: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --r-control: 0.125rem;
+  --r-panel: 0.1875rem;
+  --t-label: 0.4375rem;
+  --t-value: 0.5625rem;
+  --t-readout: 0.6875rem;
+  --t-micro: 0.4375rem;
+  --t-title: 0.9375rem;
+}
+
+</style>
+</head>
+<body>
+  <!-- composed from ui-map.json — do not hand-edit layout; edit the map -->
+<div class="apc-plate">
+    <div class="apc-cell apc-section" data-kind="shell" id="sec-mast" style="left:0rem;top:0rem;width:50rem;height:4.25rem;"><span class="apc-sec-tag">SPC8 · S-DSP</span></div>
+    <div class="apc-cell apc-section" data-kind="shell" id="sec-echo" style="left:0.5rem;top:4.75rem;width:15.25rem;height:15rem;"><span class="apc-sec-tag">ECHO / GLOBAL</span></div>
+    <div class="apc-cell apc-section" data-kind="lcd" id="sec-inst" style="left:16.25rem;top:4.75rem;width:18rem;height:15rem;"><span class="apc-sec-tag">INSTRUMENT 01</span></div>
+    <div class="apc-cell apc-section" data-kind="lcd" id="sec-presets" style="left:34.75rem;top:4.75rem;width:14.75rem;height:15rem;"><span class="apc-sec-tag">PRESETS</span></div>
+    <div class="apc-cell apc-section" data-kind="shell" id="sec-voice" style="left:0.5rem;top:20.25rem;width:49rem;height:11.25rem;"><span class="apc-sec-tag">VOICE / ENVELOPE</span></div>
+    <div class="apc-cell apc-well" id="cv-voice-readout" style="left:45.5rem;top:0.75rem;width:3.75rem;height:2.75rem;"><canvas data-fit="fit_voice_readout"></canvas></div>
+    <div class="apc-cell k-wordmark apc-wordmark" id="ctl-brand" style="left:0.75rem;top:0.5rem;width:7.5rem;height:2.25rem;">SPC8</div>
+    <div class="apc-cell k-wordmark_sub apc-wordmark-sub" id="ctl-brand-sub" style="left:0.75rem;top:2.75rem;width:17rem;height:1rem;">S-DSP · SUPER NINTENDO · 16-BIT</div>
+    <div class="apc-cell k-dotmatrix apc-dotmatrix" id="ctl-preset-readout" style="left:19rem;top:0.75rem;width:16rem;height:2.75rem;">INIT</div>
+    <div class="apc-cell apc-ctl-label" id="ctl-stereo-note" style="left:36rem;top:2.25rem;width:9rem;height:1rem;">MONO VOICES · ECHO STEREO</div>
+    <button class="apc-cell apc-psw" id="ctl-echo-enable" data-param="echo_enable" aria-checked="false" style="left:1rem;top:5.25rem;width:4.5rem;height:2.25rem;"><span class="led"></span><span>ECHO</span></button>
+    <div class="apc-cell apc-knob" id="ctl-echo-delay" data-param="echo_delay" style="left:6rem;top:5.25rem;width:3.5rem;height:3.5rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div><div class="apc-ctl-label">DELAY</div></div>
+    <div class="apc-cell apc-knob" id="ctl-echo-feedback" data-param="echo_feedback" style="left:10.5rem;top:5.25rem;width:3.5rem;height:3.5rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div><div class="apc-ctl-label">FB</div></div>
+    <div class="apc-cell apc-ctl-label" id="ctl-fir-cap" style="left:0.75rem;top:8.75rem;width:6rem;height:0.75rem;">ECHO FIR 0–7</div>
+    <div class="apc-cell apc-knob" id="ctl-fir-0" data-param="echo_fir_0" style="left:0.75rem;top:9.5rem;width:1.75rem;height:3.25rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div></div>
+    <div class="apc-cell apc-knob" id="ctl-fir-1" data-param="echo_fir_1" style="left:2.5rem;top:9.5rem;width:1.75rem;height:3.25rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div></div>
+    <div class="apc-cell apc-knob" id="ctl-fir-2" data-param="echo_fir_2" style="left:4.25rem;top:9.5rem;width:1.75rem;height:3.25rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div></div>
+    <div class="apc-cell apc-knob" id="ctl-fir-3" data-param="echo_fir_3" style="left:6rem;top:9.5rem;width:1.75rem;height:3.25rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div></div>
+    <div class="apc-cell apc-knob" id="ctl-fir-4" data-param="echo_fir_4" style="left:7.75rem;top:9.5rem;width:1.75rem;height:3.25rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div></div>
+    <div class="apc-cell apc-knob" id="ctl-fir-5" data-param="echo_fir_5" style="left:9.5rem;top:9.5rem;width:1.75rem;height:3.25rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div></div>
+    <div class="apc-cell apc-knob" id="ctl-fir-6" data-param="echo_fir_6" style="left:11.25rem;top:9.5rem;width:1.75rem;height:3.25rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div></div>
+    <div class="apc-cell apc-knob" id="ctl-fir-7" data-param="echo_fir_7" style="left:13rem;top:9.5rem;width:1.75rem;height:3.25rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div></div>
+    <div class="apc-cell apc-knob" id="ctl-noise-rate" data-param="noise_rate" style="left:1rem;top:13.5rem;width:3.25rem;height:3.25rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div><div class="apc-ctl-label">NOISE</div></div>
+    <div class="apc-cell apc-flip" id="ctl-interpolation" data-param="interpolation" style="left:4.75rem;top:13.75rem;width:4.5rem;height:2.75rem;"><button class="apc-flip-cap"><span class="apc-flip-value">GAUSS</span></button><div class="apc-ctl-label">INTERP</div></div>
+    <button class="apc-cell apc-psw" id="ctl-soft-reset" data-param="soft_reset" aria-checked="false" style="left:9.75rem;top:13.75rem;width:5rem;height:2.25rem;"><span class="led"></span><span>RESET</span></button>
+    <div class="apc-cell k-lcd apc-flip" id="ctl-inst-name" data-param="inst1_name" style="left:16.75rem;top:5.25rem;width:8rem;height:2.25rem;"><button class="apc-flip-cap"><span class="apc-flip-value">Init</span></button></div>
+    <div class="apc-cell k-lcd apc-flip" id="ctl-inst-midi" data-param="inst1_midi_channel" style="left:25.25rem;top:5.25rem;width:4rem;height:2.75rem;"><button class="apc-flip-cap"><span class="apc-flip-value">1</span></button><div class="apc-ctl-label">MIDI</div></div>
+    <button class="apc-cell k-lcd apc-psw" id="ctl-inst-mute" data-param="inst1_mute" aria-checked="false" style="left:29.75rem;top:5.25rem;width:4rem;height:2.25rem;"><span class="led"></span><span>MUTE</span></button>
+    <div class="apc-cell k-lcd apc-flip" id="ctl-inst-sample" data-param="inst1_sample_slot" style="left:16.75rem;top:8.5rem;width:3.5rem;height:2.75rem;"><button class="apc-flip-cap"><span class="apc-flip-value">00</span></button><div class="apc-ctl-label">SAMPLE</div></div>
+    <div class="apc-cell k-lcd apc-knob" id="ctl-inst-root" data-param="inst1_root_note" style="left:20.75rem;top:8.25rem;width:3.25rem;height:3.25rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div><div class="apc-ctl-label">ROOT</div></div>
+    <button class="apc-cell k-lcd apc-psw" id="ctl-inst-loop" data-param="inst1_loop" aria-checked="false" style="left:24.5rem;top:8.75rem;width:4rem;height:2.25rem;"><span class="led"></span><span>LOOP</span></button>
+    <div class="apc-cell k-lcd apc-knob" id="ctl-inst-volume" data-param="inst1_volume" style="left:29.5rem;top:8.25rem;width:3.25rem;height:3.25rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div><div class="apc-ctl-label">VOL</div></div>
+    <div class="apc-cell k-lcd apc-knob" id="ctl-inst-tune" data-param="inst1_tune" style="left:16.75rem;top:12.25rem;width:3.25rem;height:3.25rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div><div class="apc-ctl-label">TUNE</div></div>
+    <div class="apc-cell k-lcd apc-knob" id="ctl-inst-fine" data-param="inst1_fine" style="left:20.5rem;top:12.25rem;width:3.25rem;height:3.25rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div><div class="apc-ctl-label">FINE</div></div>
+    <button class="apc-cell k-lcd apc-psw" id="ctl-inst-echo-send" data-param="inst1_echo_send" aria-checked="false" style="left:24.5rem;top:12.5rem;width:4.75rem;height:2.25rem;"><span class="led"></span><span>ECHO SEND</span></button>
+    <button class="apc-cell k-lcd apc-psw" id="ctl-inst-pitch-mod" data-param="inst1_pitch_mod" aria-checked="false" style="left:24.5rem;top:15.5rem;width:4.75rem;height:2.25rem;"><span class="led"></span><span>PITCH MOD</span></button>
+    <button class="apc-cell k-lcd apc-psw" id="ctl-inst-noise" data-param="inst1_noise_enable" aria-checked="false" style="left:29.75rem;top:12.5rem;width:4rem;height:2.25rem;"><span class="led"></span><span>NOISE</span></button>
+    <div class="apc-cell k-lcd apc-flip" id="ctl-inst-env-mode" data-param="inst1_envelope_mode" style="left:29.75rem;top:15.5rem;width:4rem;height:2.75rem;"><button class="apc-flip-cap"><span class="apc-flip-value">ADSR</span></button><div class="apc-ctl-label">ENV</div></div>
+    <div class="apc-cell k-lcd apc-ctl-label" id="ctl-presets-cap" style="left:35.25rem;top:5.25rem;width:6rem;height:0.75rem;">PRESETS</div>
+    <div class="apc-cell k-lcd apc-ctl-label" id="ctl-preset-init" style="left:35.25rem;top:6.25rem;width:12rem;height:1.25rem;">Init</div>
+    <div class="apc-cell k-lcd apc-ctl-label" id="ctl-preset-lead" style="left:35.25rem;top:7.75rem;width:12rem;height:1.25rem;">Lead</div>
+    <div class="apc-cell k-lcd apc-ctl-label" id="ctl-preset-strings" style="left:35.25rem;top:9.25rem;width:12rem;height:1.25rem;">Strings</div>
+    <div class="apc-cell k-lcd apc-ctl-label" id="ctl-preset-bass" style="left:35.25rem;top:10.75rem;width:12rem;height:1.25rem;">Bass</div>
+    <div class="apc-cell k-lcd apc-ctl-label" id="ctl-preset-echo" style="left:35.25rem;top:12.25rem;width:12rem;height:1.25rem;">Echo Cathedral</div>
+    <div class="apc-cell k-lcd apc-ctl-label" id="ctl-deferred-bank" style="left:35.25rem;top:14.75rem;width:12rem;height:0.75rem;">IMPORT BANK · v0.2</div>
+    <div class="apc-cell k-lcd apc-ctl-label" id="ctl-deferred-brr" style="left:35.25rem;top:15.75rem;width:12rem;height:0.75rem;">WAV → BRR · v0.2</div>
+    <div class="apc-cell k-lcd apc-ctl-label" id="ctl-deferred-table" style="left:35.25rem;top:16.75rem;width:12rem;height:0.75rem;">16 INSTRUMENTS · v0.2</div>
+    <div class="apc-cell k-lcd apc-ctl-label" id="ctl-deferred-spc" style="left:35.25rem;top:17.75rem;width:12rem;height:0.75rem;">EXPORT .SPC · v0.3</div>
+    <div class="apc-cell apc-knob" id="ctl-att" data-param="inst1_attack" style="left:1.25rem;top:21.75rem;width:3.5rem;height:3.75rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div><div class="apc-ctl-label">ATK</div></div>
+    <div class="apc-cell apc-knob" id="ctl-dr1" data-param="inst1_decay" style="left:5.25rem;top:21.75rem;width:3.5rem;height:3.75rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div><div class="apc-ctl-label">DR1</div></div>
+    <div class="apc-cell apc-knob" id="ctl-sus" data-param="inst1_sustain_level" style="left:9.25rem;top:21.75rem;width:3.5rem;height:3.75rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div><div class="apc-ctl-label">SUS</div></div>
+    <div class="apc-cell apc-knob" id="ctl-dr2" data-param="inst1_sustain_rate" style="left:13.25rem;top:21.75rem;width:3.5rem;height:3.75rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div><div class="apc-ctl-label">DR2</div></div>
+    <div class="apc-cell apc-knob" id="ctl-rr" data-param="inst1_release" style="left:17.25rem;top:21.75rem;width:3.5rem;height:3.75rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div><div class="apc-ctl-label">RR</div></div>
+    <div class="apc-cell apc-flip" id="ctl-gain-mode" data-param="inst1_gain_mode" style="left:21.5rem;top:21.75rem;width:5.25rem;height:2.75rem;"><button class="apc-flip-cap"><span class="apc-flip-value">DIRECT</span></button><div class="apc-ctl-label">GAIN MODE</div></div>
+    <div class="apc-cell apc-knob" id="ctl-gain-value" data-param="inst1_gain_value" style="left:27.25rem;top:21.75rem;width:3.5rem;height:3.75rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div><div class="apc-ctl-label">GAIN</div></div>
+    <div class="apc-cell apc-knob" id="ctl-master" data-param="master_volume" style="left:31.5rem;top:21.75rem;width:3.5rem;height:3.75rem;"><div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div><div class="apc-ctl-label">MASTER</div></div>
+    <div class="apc-cell apc-flip" id="ctl-voice-steal" data-param="voice_steal" style="left:35.75rem;top:21.75rem;width:5.5rem;height:2.75rem;"><button class="apc-flip-cap"><span class="apc-flip-value">OLDEST</span></button><div class="apc-ctl-label">STEAL</div></div>
+    <div class="apc-cell apc-ctl-label" id="ctl-pool-note" style="left:42rem;top:21.75rem;width:7rem;height:1rem;">8 VOICES · SHARED POOL</div>
+    <div class="apc-cell apc-screen" id="ctl-voice-count" style="left:1.25rem;top:26.5rem;width:12rem;height:2rem;">8 / 8 VOICES</div>
+    <div class="apc-cell apc-screen" id="ctl-clock-readout" style="left:14.25rem;top:26.5rem;width:12rem;height:2rem;">32.0 kHz · GAUSS</div>
+    <div class="apc-cell apc-screen" id="ctl-engine-readout" style="left:27.25rem;top:26.5rem;width:12rem;height:2rem;">S-DSP · 8V · v0.1</div>
+    <div class="apc-grip" id="ctl-grip" title="Drag to resize"></div>
+</div>
+<script src="apc-ui/apc-fit.js"></script>
+<script>
+window.fit_voice_readout = (function(label){ return function(ctx,w,h){
+    ctx.fillStyle='#0a0906'; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle='#4fc07a'; ctx.font='bold '+Math.floor(h*0.5)+'px monospace';
+    ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(label||'—',w/2,h/2);
+  }; })("8");
+  document.addEventListener("DOMContentLoaded", function () {
+    if (window.APC) APC.mountKit(document);
+  });
+</script>
+</body>
+</html>

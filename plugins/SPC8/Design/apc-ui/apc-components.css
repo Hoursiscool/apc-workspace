@@ -1,0 +1,252 @@
+/* =============================================================================
+   apc-components.css — APC UI catalog, starter set.
+   Components are positioned by the composer via `.apc-cell` absolute rem cells.
+   They scale with rem (1 rem = 1 grid cell); no px sizing outside hairlines.
+   Add new components here only — ad-hoc styled divs are lint defects.
+   ============================================================================= */
+
+/* ---- knob (rotary) ----------------------------------------------------------
+   <div class="apc-cell apc-knob" data-param="cutoff">
+     <div class="apc-knob-dial"><div class="apc-knob-pointer"></div></div>
+     <div class="apc-knob-label">CUTOFF</div>
+   </div>                                                                        */
+.apc-knob { display: flex; flex-direction: column; align-items: center; gap: .25rem; }
+.apc-knob-dial {
+  position: relative;
+  flex: 1;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, var(--plate-2), var(--inset) 75%);
+  border: 1px solid var(--rule);
+  box-shadow: var(--sh-raised);
+}
+.apc-knob-pointer {
+  position: absolute;
+  left: 50%; top: 8%;
+  width: max(1px, .09rem);
+  height: 30%;
+  background: var(--accent);
+  transform-origin: 50% 140%;
+  transform: translateX(-50%) rotate(-135deg);
+}
+.apc-knob-label, .apc-ctl-label {
+  font-size: var(--t-label, .5rem);
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+/* section frame tag — tiny documentation caption in the section corner */
+.apc-sec-tag {
+  position: absolute; left: .375rem; top: .1875rem;
+  font-size: .4rem; font-weight: 600; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-2); opacity: .55;
+  white-space: nowrap; pointer-events: none;
+}
+
+/* ---- detent flip (multiposition toggle) -------------------------------------
+   <div class="apc-cell apc-flip" data-param="std"><button class="apc-flip-cap">
+     <span class="apc-flip-value">VU</span></button>
+     <div class="apc-ctl-label">STD</div></div>                                   */
+.apc-flip { display: flex; flex-direction: column; align-items: center; gap: .1875rem; }
+.apc-flip-cap {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  min-height: 1.25rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--r-control);
+  background: var(--plate-2);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: var(--t-value, .625rem);
+  font-weight: 600;
+  letter-spacing: .1em;
+  cursor: pointer;
+  box-shadow: var(--sh-raised);
+}
+.apc-flip-cap::after {
+  content: ""; position: absolute; inset: 0;
+  border-radius: inherit; pointer-events: none;
+  box-shadow: var(--sh-recess); opacity: .4;
+}
+.apc-flip-cap:active { filter: brightness(1.15); }
+
+/* ---- panel switch (binary toggle) -------------------------------------------
+   <button class="apc-cell apc-psw" data-param="bypass" aria-checked="false">
+     <span class="led"></span><span>BYPASS</span></button>                        */
+.apc-psw {
+  display: flex; align-items: center; justify-content: center;
+  gap: .375rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--r-control);
+  background: var(--plate-2);
+  color: var(--ink-2);
+  font-family: var(--font-ui);
+  font-size: var(--t-label, .5rem);
+  font-weight: 600;
+  letter-spacing: .14em;
+  cursor: pointer;
+  box-shadow: var(--sh-raised);
+}
+.apc-psw .led {
+  width: .5rem; height: .5rem; border-radius: 50%;
+  background: var(--ink-2); opacity: .35;
+}
+.apc-psw[aria-checked="true"] { color: var(--ink); }
+.apc-psw[aria-checked="true"] .led {
+  background: var(--accent); opacity: 1;
+  box-shadow: 0 0 .5rem var(--accent);
+}
+
+/* ---- fader (linear) ----------------------------------------------------------
+   <div class="apc-cell apc-fader" data-param="gain">
+     <div class="apc-fader-track"><div class="apc-fader-cap"></div></div>
+     <div class="apc-ctl-label">GAIN</div></div>                                 */
+.apc-fader { display: flex; flex-direction: column; align-items: center; gap: .25rem; }
+.apc-fader-track {
+  position: relative; flex: 1; width: .375rem;
+  background: var(--inset); border-radius: 2px;
+  box-shadow: var(--sh-recess);
+}
+.apc-fader-cap {
+  position: absolute; left: 50%; top: 20%;
+  width: 1.5rem; height: .625rem;
+  transform: translate(-50%, -50%);
+  background: var(--plate-2);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  box-shadow: var(--sh-raised);
+}
+
+/* ---- LED screen (readout) ----------------------------------------------------
+   <div class="apc-cell apc-screen" id="read-peak">-00.0</div>                   */
+.apc-screen {
+  display: flex; align-items: center; justify-content: center;
+  background: var(--inset);
+  border-radius: 3px;
+  box-shadow: var(--sh-recess);
+  color: var(--accent);
+  font-size: var(--t-readout, .6875rem);
+  font-weight: 600;
+  letter-spacing: .08em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- meter well (canvas slot) -------------------------------------------------
+   <div class="apc-cell apc-well"><canvas id="meter-l"></canvas></div>           */
+.apc-well {
+  position: relative; overflow: hidden;
+  background: var(--inset);
+  border-radius: var(--r-control);
+}
+.apc-well::after {
+  content: ""; position: absolute; inset: 0;
+  border-radius: inherit; box-shadow: var(--sh-recess);
+  pointer-events: none; z-index: 2;
+}
+.apc-well canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* ---- chip (small action button) ------------------------------------------------
+   <button class="apc-cell apc-chip">SET</button>                                 */
+.apc-chip {
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--rule-2);
+  border-radius: 2px;
+  background: var(--plate-2);
+  color: var(--ink-2);
+  font-family: var(--font-ui);
+  font-size: var(--t-micro, .4375rem);
+  font-weight: 600;
+  letter-spacing: .1em;
+  cursor: pointer;
+}
+.apc-chip:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ---- LCD section (chip-panel language: green LCD face with scanlines) --------
+   ui-map: sections[] { "kind": "lcd" } — panel chrome only, controls stay
+   siblings and opt into dark-on-green label ink with kind "lcd".            */
+.apc-section[data-kind="lcd"] {
+  background:
+    repeating-linear-gradient(0deg,
+      rgba(0, 0, 0, .055) 0 1px, transparent 1px calc(.25rem)),
+    linear-gradient(180deg, rgba(255,255,255,.16), rgba(0,0,0,.05) 70%),
+    var(--panel-lcd, #7caf74);
+  border-color: var(--lcd-rule, #4e7a4c);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.35),
+    inset 0 -.125rem .375rem rgba(0,0,0,.22);
+}
+.apc-section[data-kind="lcd"] .apc-sec-tag { color: var(--lcd-ink, #22402a); opacity: .9; }
+
+/* console shell chrome: moulded plastic with a colour seam */
+.apc-section[data-kind="shell"] {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.45), rgba(0,0,0,.06)),
+    var(--plate-2);
+  border-color: var(--rule);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.6),
+    inset 0 -.125rem .25rem rgba(0,0,0,.12),
+    var(--sh-raised);
+}
+.apc-section[data-kind="shell"] .apc-sec-tag { color: var(--lcd-ink, #3a3450); opacity: .8; }
+
+/* ---- dark ink for labels sitting on an LCD panel ---------------------------- */
+.apc-cell.k-lcd .apc-ctl-label,
+.apc-cell.k-lcd .apc-knob-label { color: var(--lcd-ink, #22402a); }
+
+/* ---- dot-matrix readout ------------------------------------------------------
+   <div class="apc-cell apc-dotmatrix">INIT</div>                               */
+.apc-dotmatrix {
+  display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(circle, rgba(160,255,190,.20) 0 calc(.05rem), transparent calc(.06rem)) 0 0 / calc(.2rem) calc(.2rem),
+    var(--lcd-face, #0a1310);
+  border: 1px solid var(--lcd-rule, #4e7a4c);
+  border-radius: var(--r-control);
+  box-shadow: var(--sh-recess), inset 0 0 calc(.5rem) rgba(0,0,0,.9);
+  color: var(--lcd-glow, #8cffb0);
+  font-family: var(--font-ui);
+  font-size: var(--t-readout, .625rem);
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  text-shadow: 0 0 calc(.3rem) rgba(140,255,176,.55);
+  overflow: hidden;
+}
+.apc-dotmatrix::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,.28) 0 1px, transparent 1px calc(.1875rem));
+  opacity: .5;
+}
+
+/* ---- pixel-style wordmark (original: blocky monospace + hard offset shadow) -- */
+.apc-wordmark {
+  display: flex; align-items: center;
+  font-family: var(--font-ui);
+  font-size: var(--t-title, .875rem);
+  font-weight: 800;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--mark-fill, #f3d64e);
+  -webkit-text-stroke: .03125rem var(--mark-edge, #2a1608);
+  text-shadow:
+    .0625rem .0625rem 0 var(--mark-shade, #8a4a12),
+    .125rem .125rem 0 var(--mark-edge, #2a1608),
+    0 0 .5rem rgba(243,214,78,.35);
+  white-space: nowrap;
+}
+.apc-wordmark-sub {
+  display: flex; align-items: center;
+  font-family: var(--font-ui);
+  font-size: var(--t-micro, .4375rem);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--lcd-ink, #3a3450);
+  opacity: .75;
+  white-space: nowrap;
+}
